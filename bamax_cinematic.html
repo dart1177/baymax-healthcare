@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Virtual Baymax — Voice Healthcare Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0f1e 0%, #06090f 100%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
+            padding: 10px;
+            margin: 0;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Baymax Face Only */
+        .baymax-container {
+            position: relative;
+            width: min(300px, 80vw);
+            height: min(300px, 80vw);
+            max-width: 300px;
+            max-height: 300px;
+        }
+
+        .baymax-face {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 35% 35%, #f0f4ff, #e2e8f0);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 60px rgba(45, 212, 191, 0.3);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        /* Eyes with scanning animation */
+        .eyes {
+            display: flex;
+            gap: min(60px, 15vw);
+            justify-content: center;
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .eye {
+            width: min(40px, 10vw);
+            height: min(40px, 10vw);
+            max-width: 40px;
+            max-height: 40px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Scanning eye effect */
+        .eye.scanning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #2dd4bf, transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .eye.listening {
+            background: #2dd4bf;
+            box-shadow: 0 0 20px #2dd4bf;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        /* Mouth */
+        .mouth {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(60px, 15vw);
+            height: min(15px, 4vw);
+            max-width: 60px;
+            max-height: 15px;
+            background: #8a99b0;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .mouth.smiling {
+            width: min(80px, 20vw);
+            height: min(18px, 5vw);
+            max-width: 80px;
+            max-height: 18px;
+            background: #2dd4bf;
+        }
+
+        /* Floating Text */
+        .floating-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #2dd4bf;
+            font-size: clamp(16px, 4vw, 24px);
+            font-weight: 500;
+            text-align: center;
+            max-width: 90vw;
+            line-height: 1.6;
+            opacity: 0;
+            pointer-events: none;
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.5);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .floating-text.show {
+            animation: floatText 8s ease-in-out;
+        }
+
+        @keyframes floatText {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, -60%) scale(1);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -70%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -80%) scale(0.9);
+            }
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #2dd4bf;
+            font-size: clamp(10px, 2.5vw, 12px);
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .baymax-container {
+                width: min(250px, 70vw);
+                height: min(250px, 70vw);
+                max-width: 250px;
+                max-height: 250px;
+            }
+            
+            .eyes {
+                gap: min(45px, 12vw);
+                top: 32%;
+            }
+            
+            .eye {
+                width: min(32px, 8vw);
+                height: min(32px, 8vw);
+                max-width: 32px;
+                max-height: 32px;
+            }
+            
+            .mouth {
+                width: min(50px, 12vw);
+                height: min(12px, 3vw);
+                max-width: 50px;
+                max-height: 12px;
+                bottom: 22%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .baymax-container {
+                width: min(200px, 60vw);
+                height: min(200px, 60vw);
+                max-width: 200px;
+                max-height: 200px;
+            }
+        }
+
+        /* Touch area for interaction */
+        .touch-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Baymax Face Only -->
+    <div class="baymax-container">
+        <div class="baymax-face">
+            <div class="eyes">
+                <div class="eye" id="leftEye"></div>
+                <div class="eye" id="rightEye"></div>
+            </div>
+            <div class="mouth" id="mouth"></div>
+        </div>
+        
+        <!-- Floating Text -->
+        <div class="floating-text" id="floatingText"></div>
+        
+        <!-- Status Indicator -->
+        <div class="status-indicator" id="statusIndicator">TAP TO START</div>
+        
+        <!-- Touch Area -->
+        <div class="touch-area" id="touchArea"></div>
+    </div>
+
+    <script>
+        // Cinematic Baymax - Face Only Experience
+
+        let isListening = false;
+        let recognition = null;
+        let isProcessing = false;
+        let audioInitialized = false;
+
+        // DOM elements
+        const leftEye = document.getElementById('leftEye');
+        const rightEye = document.getElementById('rightEye');
+        const mouth = document.getElementById('mouth');
+        const floatingText = document.getElementById('floatingText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const touchArea = document.getElementById('touchArea');
+
+        // Check for speech recognition support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const speechSynthesis = window.speechSynthesis;
+
+        // Mobile audio permission handler
+        async function requestAudioPermission() {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    return true;
+                }
+            } catch (error) {
+                console.log('Audio permission error:', error);
+                return false;
+            }
+            return true;
+        }
+
+        // Initialize audio on first user interaction
+        async function initializeAudio() {
+            if (!audioInitialized) {
+                await requestAudioPermission();
+                if (window.AudioContext || window.webkitAudioContext) {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    if (audioContext.state === 'suspended') {
+                        await audioContext.resume();
+                    }
+                }
+                audioInitialized = true;
+            }
+        }
+
+        // Medical knowledge base
+        const medicalResponses = {
+            headache: {
+                response: "I understand you have a headache. On a scale of 1 to 10, how severe is it? Common causes include dehydration, stress, or eye strain. Try drinking water, resting in a dark room, and applying a cool compress. If the headache is severe or accompanied by vision changes, please see a doctor."
+            },
+            fever: {
+                response: "You have a fever. Your body is fighting an infection. Rest is very important. Drink plenty of fluids like water or herbal tea. You can use a cool cloth on your forehead. If your fever goes above 103°F or 39.5°C or lasts more than 3 days, please consult a doctor."
+            },
+            cough: {
+                response: "I hear you have a cough. Honey and warm tea can help soothe your throat. Stay hydrated and rest your voice. If you have difficulty breathing, chest pain, or coughing up blood, seek medical attention immediately."
+            },
+            stomach: {
+                response: "Your stomach is bothering you. Try the BRAT diet - bananas, rice, applesauce, toast. Sip clear liquids. Avoid spicy or fatty foods. If you have severe pain, blood in vomit or stool, or high fever, please see a doctor right away."
+            },
+            default: {
+                response: "Thank you for telling me how you feel. I recommend resting, staying hydrated, and monitoring your symptoms. If your condition worsens or you have severe pain, difficulty breathing, or confusion, please seek medical help immediately. Is there anything specific you'd like to ask about your health?"
+            }
+        };
+
+        // Detect symptoms from speech
+        function detectSymptoms(text) {
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes('head') || lowerText.includes('headache') || lowerText.includes('migraine')) {
+                return 'headache';
+            }
+            if (lowerText.includes('fever') || lowerText.includes('hot') || lowerText.includes('temperature')) {
+                return 'fever';
+            }
+            if (lowerText.includes('cough') || lowerText.includes('throat') || lowerText.includes('cold')) {
+                return 'cough';
+            }
+            if (lowerText.includes('stomach') || lowerText.includes('belly') || lowerText.includes('nausea') || lowerText.includes('vomit')) {
+                return 'stomach';
+            }
+            return 'default';
+        }
+
+        // Show floating text
+        function showFloatingText(text) {
+            floatingText.textContent = text;
+            floatingText.classList.remove('show');
+            void floatingText.offsetWidth; // Force reflow
+            floatingText.classList.add('show');
+        }
+
+        // Make Baymax speak
+        function baymaxSpeak(text) {
+            if (!speechSynthesis) return;
+
+            speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 1;
+            utterance.lang = 'en-US';
+
+            const voices = speechSynthesis.getVoices();
+            const gentleVoice = voices.find(v => v.name.includes('Google UK') || v.name.includes('Samantha') || v.name.includes('Female'));
+            if (gentleVoice) utterance.voice = gentleVoice;
+
+            utterance.onstart = () => {
+                statusIndicator.textContent = 'SPEAKING...';
+                showFloatingText(text);
+            };
+
+            utterance.onend = () => {
+                statusIndicator.textContent = 'TAP TO CONTINUE';
+            };
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Make Baymax's face expressive
+        function setBaymaxListening(isListening_active) {
+            if (isListening_active) {
+                leftEye.classList.add('scanning');
+                rightEye.classList.add('scanning');
+                leftEye.classList.add('listening');
+                rightEye.classList.add('listening');
+                mouth.classList.add('smiling');
+            } else {
+                leftEye.classList.remove('scanning');
+                rightEye.classList.remove('scanning');
+                leftEye.classList.remove('listening');
+                rightEye.classList.remove('listening');
+                mouth.classList.remove('smiling');
+            }
+        }
+
+        // Process user's speech and respond
+        async function processUserSpeech(transcript) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            statusIndicator.textContent = 'THINKING...';
+
+            const symptomType = detectSymptoms(transcript);
+            const medicalData = medicalResponses[symptomType];
+
+            let response = `Hello. I am Baymax, your personal healthcare companion. `;
+            response += medicalData.response;
+            response += ` I cannot deactivate until I know you are satisfied with your care.`;
+
+            baymaxSpeak(response);
+            isProcessing = false;
+        }
+
+        // Initialize speech recognition
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                isListening = true;
+                statusIndicator.textContent = 'LISTENING...';
+                setBaymaxListening(true);
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                setBaymaxListening(false);
+                if (!isProcessing) {
+                    statusIndicator.textContent = 'TAP TO SPEAK';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Recognition error:', event.error);
+                isListening = false;
+                setBaymaxListening(false);
+                statusIndicator.textContent = 'TAP AGAIN';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                recognition.stop();
+                processUserSpeech(transcript);
+            };
+        } else {
+            statusIndicator.textContent = 'BROWSER NOT SUPPORTED';
+        }
+
+        // Toggle microphone
+        async function toggleMicrophone() {
+            if (isProcessing) {
+                statusIndicator.textContent = 'PLEASE WAIT...';
+                return;
+            }
+
+            if (!audioInitialized) {
+                statusIndicator.textContent = 'INITIALIZING...';
+                await initializeAudio();
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    speechSynthesis.cancel();
+                    recognition.start();
+                } catch (e) {
+                    console.log('Error starting recognition:', e);
+                    statusIndicator.textContent = 'TAP AGAIN';
+                    
+                    setTimeout(() => {
+                        try {
+                            recognition.start();
+                        } catch (retryError) {
+                            statusIndicator.textContent = 'MICROPHONE NEEDED';
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        // Touch/click event listener
+        touchArea.addEventListener('click', toggleMicrophone);
+        touchArea.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            toggleMicrophone();
+        });
+
+        // Load voices when ready
+        if (speechSynthesis) {
+            speechSynthesis.onvoiceschanged = () => {
+                console.log('Voices loaded');
+            };
+        }
+
+        // Initial welcome message
+        setTimeout(() => {
+            baymaxSpeak("Hello. I am Baymax, your personal healthcare companion. Tap anywhere to tell me how you are feeling today.");
+        }, 1000);
+    </script>
+</body>
+
+</html>
