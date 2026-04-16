@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Virtual Baymax — Voice Healthcare Companion</title>
     <style>
         * {
@@ -15,22 +15,47 @@
         body {
             background: linear-gradient(145deg, #0a0f1e 0%, #06090f 100%);
             min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport for mobile */
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
-            padding: 20px;
+            padding: 10px;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .container {
             max-width: 500px;
-            width: 100%;
+            width: 95%;
+            max-width: min(500px, 95vw);
             background: rgba(15, 25, 45, 0.7);
             backdrop-filter: blur(20px);
-            border-radius: 64px;
-            padding: 40px 28px;
+            border-radius: 32px;
+            padding: 30px 20px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 98%;
+                padding: 20px 15px;
+                border-radius: 20px;
+            }
+            
+            body {
+                padding: 5px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 15px 10px;
+            }
         }
 
         .baymax-face {
@@ -52,8 +77,10 @@
         }
 
         .baymax-circle {
-            width: 180px;
-            height: 180px;
+            width: min(180px, 40vw);
+            height: min(180px, 40vw);
+            max-width: 180px;
+            max-height: 180px;
             background: radial-gradient(circle at 35% 35%, #f0f4ff, #e2e8f0);
             border-radius: 50%;
             margin: 0 auto;
@@ -61,22 +88,49 @@
             box-shadow: 0 0 40px rgba(45, 212, 191, 0.3);
         }
 
+        @media (max-width: 480px) {
+            .baymax-circle {
+                width: min(150px, 35vw);
+                height: min(150px, 35vw);
+                max-width: 150px;
+                max-height: 150px;
+            }
+        }
+
         .eyes {
             display: flex;
-            gap: 40px;
+            gap: min(40px, 8vw);
             justify-content: center;
             position: absolute;
-            top: 65px;
+            top: 35%;
             left: 50%;
             transform: translateX(-50%);
         }
 
+        @media (max-width: 480px) {
+            .eyes {
+                gap: min(30px, 6vw);
+                top: 32%;
+            }
+        }
+
         .eye {
-            width: 32px;
-            height: 32px;
+            width: min(32px, 7vw);
+            height: min(32px, 7vw);
+            max-width: 32px;
+            max-height: 32px;
             background: #1a1a2e;
             border-radius: 50%;
             transition: all 0.2s ease;
+        }
+
+        @media (max-width: 480px) {
+            .eye {
+                width: min(24px, 6vw);
+                height: min(24px, 6vw);
+                max-width: 24px;
+                max-height: 24px;
+            }
         }
 
         .eye.listening {
@@ -101,14 +155,26 @@
 
         .mouth {
             position: absolute;
-            bottom: 45px;
+            bottom: 25%;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
-            height: 12px;
+            width: min(50px, 12vw);
+            height: min(12px, 3vw);
+            max-width: 50px;
+            max-height: 12px;
             background: #8a99b0;
             border-radius: 20px;
             transition: all 0.2s;
+        }
+
+        @media (max-width: 480px) {
+            .mouth {
+                bottom: 22%;
+                width: min(40px, 10vw);
+                height: min(10px, 2.5vw);
+                max-width: 40px;
+                max-height: 10px;
+            }
         }
 
         .mouth.smiling {
@@ -145,9 +211,9 @@
             width: 100%;
             background: linear-gradient(135deg, #2dd4bf, #14b8a6);
             border: none;
-            padding: 20px;
-            border-radius: 60px;
-            font-size: 20px;
+            padding: 18px 20px;
+            border-radius: 50px;
+            font-size: clamp(16px, 4vw, 20px);
             font-weight: bold;
             color: #0a0f1e;
             cursor: pointer;
@@ -157,11 +223,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
+            min-height: 60px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 480px) {
+            .mic-button {
+                padding: 15px 18px;
+                min-height: 55px;
+                font-size: clamp(14px, 3.5vw, 18px);
+            }
         }
 
         .mic-button:active {
             transform: scale(0.97);
+        }
+
+        .mic-button:hover {
+            transform: scale(1.02);
+        }
+
+        /* Mobile touch feedback */
+        @media (hover: none) {
+            .mic-button:hover {
+                transform: none;
+            }
         }
 
         .mic-button.listening {
@@ -227,8 +315,16 @@
         .instruction {
             text-align: center;
             color: #94a3b8;
-            font-size: 14px;
+            font-size: clamp(12px, 3vw, 14px);
             margin-top: 16px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 480px) {
+            .instruction {
+                font-size: clamp(11px, 2.8vw, 13px);
+                margin-top: 12px;
+            }
         }
     </style>
 </head>
@@ -295,6 +391,37 @@
         // Check for speech recognition support
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const speechSynthesis = window.speechSynthesis;
+
+        // Mobile audio permission handler
+        async function requestAudioPermission() {
+            try {
+                // For iOS Safari and mobile browsers
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    return true;
+                }
+            } catch (error) {
+                console.log('Audio permission error:', error);
+                return false;
+            }
+            return true; // Assume granted if getUserMedia not available
+        }
+
+        // Initialize audio on first user interaction (required for mobile)
+        let audioInitialized = false;
+        async function initializeAudio() {
+            if (!audioInitialized) {
+                await requestAudioPermission();
+                // Create a silent audio context to enable audio on mobile
+                if (window.AudioContext || window.webkitAudioContext) {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    if (audioContext.state === 'suspended') {
+                        await audioContext.resume();
+                    }
+                }
+                audioInitialized = true;
+            }
+        }
 
         if (!SpeechRecognition) {
             statusText.textContent = '❌ SPEECH NOT SUPPORTED';
@@ -497,10 +624,16 @@
         }
 
         // Toggle microphone
-        function toggleMicrophone() {
+        async function toggleMicrophone() {
             if (isProcessing) {
-                statusText.textContent = '⏳ PLEASE WAIT, BAYMAX IS SPEAKING...';
+                statusText.textContent = '?? PLEASE WAIT, BAYMAX IS SPEAKING...';
                 return;
+            }
+
+            // Initialize audio on first interaction (mobile requirement)
+            if (!audioInitialized) {
+                statusText.textContent = '?? INITIALIZING AUDIO...';
+                await initializeAudio();
             }
 
             if (isListening) {
@@ -512,7 +645,16 @@
                     recognition.start();
                 } catch (e) {
                     console.log('Error starting recognition:', e);
-                    statusText.textContent = '⚠️ PLEASE TAP AGAIN';
+                    statusText.textContent = '?? PLEASE TAP AGAIN';
+                    
+                    // Retry after a short delay (mobile browsers sometimes need this)
+                    setTimeout(() => {
+                        try {
+                            recognition.start();
+                        } catch (retryError) {
+                            statusText.textContent = '?? MICROPHONE ACCESS NEEDED';
+                        }
+                    }, 500);
                 }
             }
         }
