@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "baymax-healthcare",
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/bamax.html"
+    }
+  ],
+  "builds": [
+    {
+      "src": "bamax.html",
+      "use": "@vercel/static"
+    }
+  ]
+}

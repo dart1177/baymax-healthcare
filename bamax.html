@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Virtual Baymax — Voice Healthcare Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0f1e 0%, #06090f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(15, 25, 45, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 64px;
+            padding: 40px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+
+        .baymax-face {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .baymax-circle {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 35% 35%, #f0f4ff, #e2e8f0);
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 40px rgba(45, 212, 191, 0.3);
+        }
+
+        .eyes {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            position: absolute;
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .eye {
+            width: 32px;
+            height: 32px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .eye.listening {
+            background: #2dd4bf;
+            box-shadow: 0 0 15px #2dd4bf;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .mouth {
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 12px;
+            background: #8a99b0;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .mouth.smiling {
+            width: 70px;
+            height: 16px;
+            background: #2dd4bf;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #2dd4bf;
+            font-weight: 500;
+        }
+
+        .wave-animation {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin: 30px 0;
+            height: 50px;
+        }
+
+        .wave-bar {
+            width: 5px;
+            background: #2dd4bf;
+            border-radius: 4px;
+            transition: height 0.1s ease;
+        }
+
+        .mic-button {
+            width: 100%;
+            background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+            border: none;
+            padding: 20px;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0a0f1e;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .mic-button:active {
+            transform: scale(0.97);
+        }
+
+        .mic-button.listening {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: micPulse 1.2s infinite;
+        }
+
+        @keyframes micPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .response-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 32px;
+            padding: 24px;
+            margin-top: 30px;
+            border-left: 4px solid #2dd4bf;
+            display: none;
+        }
+
+        .response-card.show {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .baymax-speech {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .baymax-speech strong {
+            color: #2dd4bf;
+        }
+
+        .disclaimer {
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .instruction {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="baymax-face">
+            <div class="baymax-circle">
+                <div class="eyes">
+                    <div class="eye" id="leftEye"></div>
+                    <div class="eye" id="rightEye"></div>
+                </div>
+                <div class="mouth" id="mouth"></div>
+            </div>
+            <div class="status" id="statusText">⚪ BAYMAX READY</div>
+        </div>
+
+        <div class="wave-animation" id="waveContainer">
+            <div class="wave-bar" style="height: 20px"></div>
+            <div class="wave-bar" style="height: 35px"></div>
+            <div class="wave-bar" style="height: 28px"></div>
+            <div class="wave-bar" style="height: 45px"></div>
+            <div class="wave-bar" style="height: 30px"></div>
+            <div class="wave-bar" style="height: 38px"></div>
+            <div class="wave-bar" style="height: 22px"></div>
+            <div class="wave-bar" style="height: 40px"></div>
+        </div>
+
+        <button class="mic-button" id="micButton">
+            🎤 TAP & SPEAK TO BAYMAX
+        </button>
+
+        <div class="instruction">
+            👆 Tap the button, speak naturally, Baymax will answer you!
+        </div>
+
+        <div class="response-card" id="responseCard">
+            <div class="baymax-speech" id="baymaxSpeech"></div>
+        </div>
+
+        <div class="disclaimer">
+            ⚕️ Baymax is an AI healthcare companion. Not a real doctor. Always consult a physician.
+        </div>
+    </div>
+
+    <script>
+        // Voice-only Baymax! No typing needed.
+
+        let isListening = false;
+        let recognition = null;
+        let isProcessing = false;
+
+        // DOM elements
+        const micButton = document.getElementById('micButton');
+        const statusText = document.getElementById('statusText');
+        const leftEye = document.getElementById('leftEye');
+        const rightEye = document.getElementById('rightEye');
+        const mouth = document.getElementById('mouth');
+        const waveBars = document.querySelectorAll('.wave-bar');
+        const responseCard = document.getElementById('responseCard');
+        const baymaxSpeech = document.getElementById('baymaxSpeech');
+
+        // Check for speech recognition support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const speechSynthesis = window.speechSynthesis;
+
+        if (!SpeechRecognition) {
+            statusText.textContent = '❌ SPEECH NOT SUPPORTED';
+            micButton.disabled = true;
+            micButton.textContent = '⚠️ Browser Not Supported';
+        }
+
+        // Medical knowledge base (simple but effective)
+        const medicalResponses = {
+            headache: {
+                response: "I understand you have a headache. On a scale of 1 to 10, how severe is it? Common causes include dehydration, stress, or eye strain. Try drinking water, resting in a dark room, and applying a cool compress. If the headache is severe or accompanied by vision changes, please see a doctor.",
+                remedies: ["Hydration", "Rest in dark room", "Cool compress"]
+            },
+            fever: {
+                response: "You have a fever. Your body is fighting an infection. Rest is very important. Drink plenty of fluids like water or herbal tea. You can use a cool cloth on your forehead. If your fever goes above 103°F (39.5°C) or lasts more than 3 days, please consult a doctor.",
+                remedies: ["Rest", "Hydration", "Cool compress"]
+            },
+            cough: {
+                response: "I hear you have a cough. Honey and warm tea can help soothe your throat. Stay hydrated and rest your voice. If you have difficulty breathing, chest pain, or coughing up blood, seek medical attention immediately.",
+                remedies: ["Honey tea", "Rest", "Humidifier"]
+            },
+            stomach: {
+                response: "Your stomach is bothering you. Try the BRAT diet - bananas, rice, applesauce, toast. Sip clear liquids. Avoid spicy or fatty foods. If you have severe pain, blood in vomit or stool, or high fever, please see a doctor right away.",
+                remedies: ["BRAT diet", "Clear liquids", "Rest"]
+            },
+            default: {
+                response: "Thank you for telling me how you feel. I recommend resting, staying hydrated, and monitoring your symptoms. If your condition worsens or you have severe pain, difficulty breathing, or confusion, please seek medical help immediately. Is there anything specific you'd like to ask about your health?",
+                remedies: ["Rest", "Hydration", "Monitor symptoms"]
+            }
+        };
+
+        // Detect symptoms from speech
+        function detectSymptoms(text) {
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes('head') || lowerText.includes('headache') || lowerText.includes('migraine')) {
+                return 'headache';
+            }
+            if (lowerText.includes('fever') || lowerText.includes('hot') || lowerText.includes('temperature')) {
+                return 'fever';
+            }
+            if (lowerText.includes('cough') || lowerText.includes('throat') || lowerText.includes('cold')) {
+                return 'cough';
+            }
+            if (lowerText.includes('stomach') || lowerText.includes('belly') || lowerText.includes('nausea') || lowerText.includes('vomit')) {
+                return 'stomach';
+            }
+            return 'default';
+        }
+
+        // Make Baymax speak
+        function baymaxSpeak(text) {
+            if (!speechSynthesis) return;
+
+            // Cancel any ongoing speech
+            speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 1;
+            utterance.lang = 'en-US';
+
+            // Try to get a gentle voice
+            const voices = speechSynthesis.getVoices();
+            const gentleVoice = voices.find(v => v.name.includes('Google UK') || v.name.includes('Samantha') || v.name.includes('Female'));
+            if (gentleVoice) utterance.voice = gentleVoice;
+
+            utterance.onstart = () => {
+                statusText.textContent = '🔊 BAYMAX IS SPEAKING...';
+            };
+
+            utterance.onend = () => {
+                statusText.textContent = '🎤 TAP MIC TO SPEAK TO BAYMAX';
+            };
+
+            speechSynthesis.speak(utterance);
+
+            // Show text response
+            baymaxSpeech.innerHTML = `<strong>🗣️ Baymax says:</strong><br><br>${text}`;
+            responseCard.classList.add('show');
+        }
+
+        // Animate waves while listening
+        function animateListening(active) {
+            if (active) {
+                waveBars.forEach((bar, i) => {
+                    bar.style.height = `${20 + Math.random() * 40}px`;
+                });
+            } else {
+                waveBars.forEach(bar => {
+                    bar.style.height = '20px';
+                });
+            }
+        }
+
+        let waveInterval;
+
+        function startWaveAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            waveInterval = setInterval(() => {
+                if (isListening) {
+                    waveBars.forEach(bar => {
+                        bar.style.height = `${15 + Math.random() * 45}px`;
+                    });
+                }
+            }, 100);
+        }
+
+        function stopWaveAnimation() {
+            if (waveInterval) clearInterval(waveInterval);
+            waveBars.forEach(bar => {
+                bar.style.height = '20px';
+            });
+        }
+
+        // Make Baymax's face expressive
+        function setBaymaxListening(isListening_active) {
+            if (isListening_active) {
+                leftEye.classList.add('listening');
+                rightEye.classList.add('listening');
+                mouth.classList.add('smiling');
+            } else {
+                leftEye.classList.remove('listening');
+                rightEye.classList.remove('listening');
+                mouth.classList.remove('smiling');
+            }
+        }
+
+        // Process user's speech and respond
+        async function processUserSpeech(transcript) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            statusText.textContent = '🤔 BAYMAX IS THINKING...';
+
+            // Detect symptoms from what user said
+            const symptomType = detectSymptoms(transcript);
+            const medicalData = medicalResponses[symptomType];
+
+            // Craft Baymax's response
+            let response = `Hello. I am Baymax, your personal healthcare companion. `;
+            response += medicalData.response;
+
+            // Add a caring closing
+            response += ` I cannot deactivate until I know you are satisfied with your care. Please tell me more about how you're feeling, or tap the mic to ask me anything.`;
+
+            // Display and speak the response
+            baymaxSpeak(response);
+
+            statusText.textContent = '🎤 TAP MIC TO CONTINUE TALKING';
+            isProcessing = false;
+        }
+
+        // Initialize speech recognition
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                isListening = true;
+                micButton.classList.add('listening');
+                micButton.innerHTML = '🔴 LISTENING... SPEAK NOW';
+                statusText.textContent = '🎙️ BAYMAX IS LISTENING... SPEAK YOUR SYMPTOMS';
+                setBaymaxListening(true);
+                startWaveAnimation();
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                micButton.classList.remove('listening');
+                micButton.innerHTML = '🎤 TAP & SPEAK TO BAYMAX';
+                if (!isProcessing) {
+                    statusText.textContent = '🎤 TAP MIC TO SPEAK TO BAYMAX';
+                }
+                setBaymaxListening(false);
+                stopWaveAnimation();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Recognition error:', event.error);
+                isListening = false;
+                micButton.classList.remove('listening');
+                micButton.innerHTML = '🎤 TAP & SPEAK TO BAYMAX';
+                statusText.textContent = '⚠️ PLEASE TAP THE MIC BUTTON AGAIN';
+                setBaymaxListening(false);
+                stopWaveAnimation();
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                statusText.textContent = `💬 YOU SAID: "${transcript}"`;
+
+                // Stop listening and process
+                recognition.stop();
+                processUserSpeech(transcript);
+            };
+        }
+
+        // Toggle microphone
+        function toggleMicrophone() {
+            if (isProcessing) {
+                statusText.textContent = '⏳ PLEASE WAIT, BAYMAX IS SPEAKING...';
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    // Cancel any ongoing speech
+                    speechSynthesis.cancel();
+                    recognition.start();
+                } catch (e) {
+                    console.log('Error starting recognition:', e);
+                    statusText.textContent = '⚠️ PLEASE TAP AGAIN';
+                }
+            }
+        }
+
+        // Attach event listener
+        micButton.addEventListener('click', toggleMicrophone);
+
+        // Load voices when ready
+        if (speechSynthesis) {
+            speechSynthesis.onvoiceschanged = () => {
+                console.log('Voices loaded');
+            };
+        }
+
+        // Initial welcome message (speaks when page loads)
+        setTimeout(() => {
+            baymaxSpeak("Hello. I am Baymax, your personal healthcare companion. Tap the microphone button and tell me how you are feeling today.");
+        }, 500);
+    </script>
+</body>
+
+</html>

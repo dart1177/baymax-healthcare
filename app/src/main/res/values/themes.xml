@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Baymax" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/baymax_accent</item>
+        <item name="colorPrimaryVariant">@color/baymax_accent_dark</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/baymax_accent</item>
+        <item name="colorSecondaryVariant">@color/baymax_accent_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/baymax_bg_primary</item>
+        <!-- Navigation bar color. -->
+        <item name="android:navigationBarColor" tools:targetApi="l">@color/baymax_bg_primary</item>
+        <!-- Window flags for immersive mode -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- Immersive theme for MainActivity -->
+    <style name="Theme.Baymax.Immersive" parent="Theme.Baymax">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+</resources>

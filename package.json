@@ -1,0 +1,13 @@
+{
+  "name": "baymax-healthcare",
+  "version": "1.0.0",
+  "description": "Virtual Baymax Healthcare Companion",
+  "main": "bamax.html",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "dev": "python -m http.server 3000"
+  },
+  "keywords": ["healthcare", "voice", "baymax", "medical"],
+  "author": "Baymax Healthcare",
+  "license": "MIT"
+}
